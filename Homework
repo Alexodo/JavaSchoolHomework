@@ -1,0 +1,166 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Solution {
+    private static List<String> name = new ArrayList<String>();
+    private static List<String> service = new ArrayList<String>();
+    private static List<Double> price = new ArrayList<Double>();
+
+
+    public static void main(String[] args) throws IOException
+    {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        double paymentSum = 0;
+        String exitCheck = null;
+        System.out.println("Please enter all the information, if you want to go for calculations, enter \"exit\"");
+
+        while (true)
+        {
+            boolean nameExist = false;
+            int existNameNumber = 0;
+            System.out.print("Enter name: ");
+            exitCheck = reader.readLine();
+            if (exitCheck.equals("exit"))
+                break;
+            else
+            {
+                for (int i = 0; i < name.size(); i++) {
+                    if (name.get(i).equals(exitCheck))
+                    {
+                        name.set(i, exitCheck);
+                        nameExist = true;
+                        existNameNumber = i;
+                    }
+                }
+                if (!nameExist)
+                {
+                    name.add(exitCheck);
+                }
+            }
+            System.out.println();
+            System.out.print("Enter service which was paid: ");
+            service.add(reader.readLine());
+            System.out.println();
+            System.out.print("Enter price of service: ");
+            if (nameExist)
+            {
+                String TestForNumber = reader.readLine();
+                if (isNumberCheck(TestForNumber))
+                {
+                    Double temp = Double.parseDouble(TestForNumber), toSet;
+                    toSet = price.get(existNameNumber) + temp;
+                    price.set(existNameNumber, toSet);
+                }
+                else
+                {
+                    while (true)
+                    {
+                        System.out.println("Error, you need to enter a number!!!");
+                        System.out.print("Enter price of service: ");
+                        TestForNumber = reader.readLine();
+                        if (isNumberCheck(TestForNumber))
+                        {
+                            Double temp = Double.parseDouble(TestForNumber), toSet;
+                            toSet = price.get(existNameNumber) + temp;
+                            price.set(existNameNumber, toSet);
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                String TestForNumber = reader.readLine();
+                if (isNumberCheck(TestForNumber))
+                {
+                    price.add(Double.parseDouble(TestForNumber));
+                }
+                else
+                {
+                    while (true)
+                    {
+                        System.out.println("Error, you need to enter a number!!!");
+                        System.out.print("Enter price of service: ");
+                        TestForNumber = reader.readLine();
+                        if (isNumberCheck(TestForNumber))
+                        {
+                            price.add(Double.parseDouble(TestForNumber));
+                            break;
+                        }
+                    }
+                }
+            }
+            System.out.println();
+        }
+
+        for (int i = 0; i < price.size(); i++)
+            paymentSum += price.get(i);
+
+        double paymentAverage = paymentSum / name.size();
+
+        System.out.println();
+        System.out.print("Total: " + paymentSum + "$");
+        System.out.println();
+        System.out.print("Average: " + paymentAverage + "$ to be paid by mate.");
+        System.out.println();
+
+        System.out.println();
+        System.out.println("Expenses:");
+        for (int i = 0; i < name.size(); i++)
+        {
+            System.out.print(name.get(i) + ": " + price.get(i) + "$");
+            System.out.println();
+        }
+
+        System.out.println();
+        System.out.println("Transactions to be made:");
+
+        for (int i = 0; i < name.size(); i++) {
+            if (price.get(i) > paymentAverage)
+            {
+                for (int j = 0; j < name.size(); j++)
+                {
+                    if(price.get(j) < paymentAverage)
+                    {
+                        if(price.get(i) - (paymentAverage - price.get(j)) >= paymentAverage)
+                        {
+                            System.out.println(name.get(j) + " --> " + name.get(i) + " " + (paymentAverage - price.get(j)) + "$");
+                            price.set(i, (price.get(i) - (paymentAverage - price.get(j))));
+                            price.set(j, (price.get(j) + (paymentAverage - price.get(j))));
+                        }
+                        else if(price.get(i) - (paymentAverage - price.get(j)) < paymentAverage)
+                        {
+                            double nedToAdd = price.get(i) - paymentAverage;
+                            System.out.println(name.get(j) + " --> " + name.get(i) + " " + nedToAdd  + "$");
+                            price.set(i, (price.get(i) - nedToAdd));
+                            price.set(j, (price.get(j) + nedToAdd));
+                        }
+                    }
+                }
+            }
+        }
+
+        System.out.println();
+        System.out.println("Result:");
+        for (int i = 0; i < name.size(); i++)
+        {
+            System.out.print(name.get(i) + ": " + price.get(i) + "$");
+            System.out.println();
+        }
+    }
+
+   public static boolean isNumberCheck(String s) {
+        try
+        {
+            double d = Double.parseDouble(s);
+            return true;
+        }
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
+    }
+}
